@@ -15,17 +15,10 @@
  */
 package com.ape.heartrate.camera;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -63,7 +56,7 @@ public final class CameraConfigurationManager {
             Log.w(TAG, "Device returned no supported preview sizes; using default");
             return new Point(defaultSize.width, defaultSize.height);
         }
-        for(Camera.Size size : rawSupportedSizes){
+        for (Camera.Size size : rawSupportedSizes) {
             if (size.width <= defaultSize.width && size.height <= defaultSize.height) {
                 defaultSize = size;
             }

@@ -24,8 +24,6 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Handler;
 import android.util.Log;
-import android.view.SurfaceHolder;
-
 
 import com.ape.heartrate.camera.open.OpenCameraInterface;
 
@@ -66,7 +64,7 @@ public class CameraManager {
      * Opens the camera driver and initializes the hardware parameters.
      *
      * @param surfaceTexture The surface object which the camera will draw preview frames
-     *               into.
+     *                       into.
      * @throws IOException Indicates the camera driver failed to open.
      */
     public synchronized void openDriver(SurfaceTexture surfaceTexture)

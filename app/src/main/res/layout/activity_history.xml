@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/ic_history_bg"
+              android:orientation="vertical"
+              android:padding="@dimen/history_padding"
+              tools:context="com.ape.heartrate.activity.HistoryActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/history_pager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="true"/>
+
+    <com.ape.heartrate.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/history_indicator"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/user_indicator_padding_bottom"
+        android:layout_marginLeft="@dimen/user_indicator_padding_left"
+        android:layout_marginRight="@dimen/user_indicator_padding_right"
+        android:layout_marginTop="@dimen/user_indicator_padding_top"
+        app:vpiFillColor="@color/user_indicator_fill_color"
+        app:vpiPageColor="@color/user_indicator_page_color"
+        app:vpiRadius="@dimen/user_indicator_size"
+        app:vpiStrokeWidth="0dp"/>
+</LinearLayout>

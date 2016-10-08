@@ -3,13 +3,14 @@
     <string name="measure_rate_default" translatable="false">000</string>
     <string name="measure_rate_result_error" translatable="false">_ _ _</string>
 
-    <string name="app_name">WaveHeartRate</string>
+    <string name="app_name">HeartRate</string>
     <string name="measure_btn_start">Start</string>
     <string name="measure_btn_save">Save</string>
     <string name="measure_btn_fail">Retry</string>
     <string name="history_title">History</string>
     <string name="history_conclude">The lastest <xliff:g id="times">%1$d</xliff:g> test result</string>
-    <string name="request_permission">This App needs camera permission.</string>
-    <string name="request_permission_denied">\"您拒绝了权限申请\"</string>
-    <string name="request_permission_never_ask_again">\"请跳转到设置中手动开启权限\"</string>
+    <string name="request_permission">Camera permission is needed to measure heart rate.</string>
+    <string name="request_permission_denied">Camera permission was denied. Please consider granting it in order to access the camera!</string>
+    <string name="request_permission_never_ask_again">The app does not have critical permissions needed to run. Please check your permissions settings.</string>
+    <string name="open_camera_error">Error in Camera. Please try again later.</string>
 </resources>
