@@ -27,13 +27,8 @@ public class HeartRateContract {
 
         void showOpenCameraError();
 
-        void changeUiOnFailFinishMeasure();
-
-        void changeUiOnSuccessFinishMeasure();
 
         void changeUiOnStartMeasure();
-
-        void changeUiToInitial();
 
         void onTick(long millisUntilFinished, int beatsAvg);
 

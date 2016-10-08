@@ -13,4 +13,7 @@
     <string name="request_permission_denied">Camera permission was denied. Please consider granting it in order to access the camera!</string>
     <string name="request_permission_never_ask_again">The app does not have critical permissions needed to run. Please check your permissions settings.</string>
     <string name="open_camera_error">Error in Camera. Please try again later.</string>
+    <string name="heartrate_help">touch the camera</string>
+    <string name="heartrate_save_succeed">It save succeed.</string>
+    <string name="check">Check</string>
 </resources>

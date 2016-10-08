@@ -67,6 +67,8 @@ public class HeartRateModel implements HeartRateContract.Model {
 
     @Override
     public void startMeasure(Callback callback) {
+        mBeatsAvg = 0;
+        mFinalBeatsAvg = 0;
         mCallback = callback;
         mCameraManager = new CameraManager(App.getContext());
         HeartRateThread handlerThread = new HeartRateThread(TAG);
@@ -80,10 +82,11 @@ public class HeartRateModel implements HeartRateContract.Model {
         mCountDownTimer = new CountDownTimer(MEASURE_DURATION * 1000L, 1000L) {
             @Override
             public void onTick(long millisUntilFinished) {
-                if (mFinalBeatsAvg == 0)
+                if (mFinalBeatsAvg == 0) {
                     mCallback.onTick(millisUntilFinished, mBeatsAvg);
-                else
+                }else {
                     mCallback.onFinished(mFinalBeatsAvg);
+                }
             }
 
             @Override
@@ -106,6 +109,7 @@ public class HeartRateModel implements HeartRateContract.Model {
             mTextureView.setSurfaceTextureListener(null);
         }
         if (mCameraManager != null) {
+            mCameraManager.stopPreview();
             mCameraManager.closeDriver();
         }
     }
@@ -216,7 +220,10 @@ public class HeartRateModel implements HeartRateContract.Model {
             int height = msg.arg2;
             //图像处理
             int imgAvg = ImageProcessing.decodeYUV420SPtoRedAvg(data.clone(), height, width);
-            //Log.i(TAG, "imgAvg = " + imgAvg);
+            Log.i(TAG, "imgAvg = " + imgAvg);
+            if(imgAvg < 200){
+                HeartRateModel.this.mBeatsAvg = 0;
+            }
             if (imgAvg == 0 || imgAvg == 255) {
                 mIsProcessing.set(false);
                 return true;
@@ -268,7 +275,6 @@ public class HeartRateModel implements HeartRateContract.Model {
                     mStartTime = System.currentTimeMillis();
                     //beats心跳总数
                     mBeats = 0;
-                    HeartRateModel.this.mBeatsAvg = 0;
                     mIsProcessing.set(false);
                     return true;
                 }
@@ -298,7 +304,7 @@ public class HeartRateModel implements HeartRateContract.Model {
                 //计算最终结果,连续5次差距不超过10,就作为最终测试结果
                 int distance = Math.abs(beatsAvg - mLastHeartRate);
                 mLastHeartRate = beatsAvg;
-                if (distance > 8) {
+                if (distance > 10) {
                     mRateIndex = 0;
                 } else {
                     mAverageRate[mRateIndex] = beatsAvg;

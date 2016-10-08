@@ -43,7 +43,7 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
      * the view height as 9 weights
      */
     private static final int HEIGHT_TOTAL_WEIGHTS = 9;
-    private static final int[][] m_WavePeak_Weight = new int[][]{
+    private static final int[][] WAVEPEAK_WEIGHT = new int[][]{
             new int[]{4, 0, 6, 6},
             new int[]{5, 4, HEIGHT_TOTAL_WEIGHTS, 6},
             new int[]{7, 5, 0, HEIGHT_TOTAL_WEIGHTS},
@@ -93,21 +93,17 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
     public void startWave(int value) {
         if (mWavePath == null)
             initWave();
-        startWave(value, DURATION_DRAW_WAVE);
+        doAnimation(value);
     }
 
-    private void startWave(int value, long duration) {
-        doAnimation(value, duration);
-    }
-
-    private void doAnimation(int value, long duration) {
-        if (value == 0) {
-            Animator animator = getLineAnimator(mLineObjects, duration);
+    private void doAnimation(int value) {
+        if (value <= 0) {
+            Animator animator = getLineAnimator(mLineObjects, DURATION_DRAW_WAVE);
             animator.addListener(this);
             animator.start();
         } else {
             AnimatorSet set = new AnimatorSet();
-            List<Animator> peakAnim = getPeakAnimator(duration);
+            List<Animator> peakAnim = getPeakAnimator(DURATION_DRAW_WAVE);
             set.playSequentially(peakAnim);
             set.start();
         }
@@ -138,8 +134,10 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
         return peakAnimators;
     }
 
-
-    public void stopPaint() {
+    public void stopWave() {
+        if (mWavePath != null)
+            mWavePath.reset();
+        mWavePath = null;
         recycleWaveBitmap();
     }
 
@@ -160,12 +158,11 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
         }
     }
 
-
     private void caculateByWeights(float cellWidth, float cellHeight) {
         mPeakObjects = new ArrayList<>();
-        int size = m_WavePeak_Weight.length;
+        int size = WAVEPEAK_WEIGHT.length;
         for (int i = size - 1; i >= 0; i--) {
-            float[] wave = retreiveWaveLine(m_WavePeak_Weight[i], cellWidth, cellHeight);
+            float[] wave = retreiveWaveLine(WAVEPEAK_WEIGHT[i], cellWidth, cellHeight);
             //debugWaveLine(wave);
             if (i == size - 1) {
                 mStartX = wave[0];
@@ -178,8 +175,8 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
         //debugWaveLine(mLineObjects);
     }
 
-    private float[] retreiveWaveLine(int[] m_WavePeak_Weight, float cellWidth, float cellHeight) {
-        int size = m_WavePeak_Weight.length;
+    private float[] retreiveWaveLine(int[] WavePeakWeight, float cellWidth, float cellHeight) {
+        int size = WavePeakWeight.length;
         if (size != 4) {
             throw new RuntimeException("wrong size of array");
         }
@@ -187,10 +184,10 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
         float startX, startY, endX = 0f, endY, fractionFromX, fractionToX, fractionFromY, fractionToY;
         int weightFromX, weightToX, weightFromY, weightToY;
 
-        weightFromX = m_WavePeak_Weight[0];
-        weightToX = m_WavePeak_Weight[1];
-        weightFromY = m_WavePeak_Weight[2];
-        weightToY = m_WavePeak_Weight[3];
+        weightFromX = WavePeakWeight[0];
+        weightToX = WavePeakWeight[1];
+        weightFromY = WavePeakWeight[2];
+        weightToY = WavePeakWeight[3];
 
         fractionFromX = getFractionOfWeight(weightFromX, WIDTH_TOTAL_WEIGHTS);
         fractionToX = getFractionOfWeight(weightToX, WIDTH_TOTAL_WEIGHTS);

@@ -37,7 +37,7 @@ public class HeartRatePresenter extends HeartRateContract.Presenter
     @Override
     void saveMeasure(long time, int rate) {
         mControl.saveMeasure(time, rate);
-        mView.gotoHistory();
+//        mView.gotoHistory();
     }
 
     @Override
