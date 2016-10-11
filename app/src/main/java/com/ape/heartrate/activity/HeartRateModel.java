@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public class HeartRateModel implements HeartRateContract.Model {
-    public static final int MEASURE_DURATION = 120;
+    public static final int MEASURE_DURATION = 60;
     private static final String TAG = "HeartRateModel";
     private static final int MSG_HEART_RATE_PROGRESSING = 0;
     private Handler mWorkHandler;

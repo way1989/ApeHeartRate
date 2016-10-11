@@ -148,6 +148,7 @@ public class CameraManager {
     public synchronized void stopPreview() {
 
         if (camera != null && previewing) {
+            camera.setPreviewCallback(null);
             camera.stopPreview();
             previewCallback.setHandler(null, 0);
             previewing = false;

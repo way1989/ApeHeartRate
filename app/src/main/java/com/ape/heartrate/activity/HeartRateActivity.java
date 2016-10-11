@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -113,7 +114,9 @@ public class HeartRateActivity extends BaseActivity<HeartRatePresenter, HeartRat
 
     @Override
     public void onTick(long millisUntilFinished, int beatsAvg) {
-        mTvDataMeasure.setText(String.format("%03d", beatsAvg));
+        Log.i(TAG, "millisUntilFinished = " + millisUntilFinished);
+        if(HeartRateModel.MEASURE_DURATION - millisUntilFinished / 1000 > 8)//前几秒数据不准确
+            mTvDataMeasure.setText(String.format("%03d", beatsAvg));
         mWvStart.startWave(beatsAvg);
         mPwHeartrate.incrementProgress();
         if(beatsAvg == 0)
