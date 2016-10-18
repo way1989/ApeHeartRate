@@ -6,13 +6,26 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/ic_background"
                 tools:ignore="MissingPrefix">
+
+    <TextView
+        android:id="@+id/tv_toast_no_data"
+        style="@style/HeartRate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/heartrate_help"
+        android:textSize="@dimen/measure_done_time_text_size"/>
+
     <com.ape.heartrate.view.AutoFitTextureView
         android:id="@+id/texture_view"
         android:layout_width="wrap_content"
-        android:alpha="0"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:alpha="0"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

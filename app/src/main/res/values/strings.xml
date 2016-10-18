@@ -1,7 +1,7 @@
 <resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="heartrate_unit" translatable="false">bpm</string>
-    <string name="measure_rate_default" translatable="false">000</string>
-    <string name="measure_rate_result_error" translatable="false">_ _ _</string>
+    <string name="measure_rate_default" translatable="false">N/A</string>
+    <string name="measure_rate_format" translatable="false">%03d</string>
 
     <string name="app_name">HeartRate</string>
     <string name="measure_btn_start">Start</string>
@@ -16,4 +16,5 @@
     <string name="heartrate_help">touch the camera</string>
     <string name="heartrate_save_succeed">It save succeed.</string>
     <string name="check">Check</string>
+    <string name="cancel_measure_heartrate">Cancel measure heart rate?</string>
 </resources>

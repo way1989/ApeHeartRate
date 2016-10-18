@@ -13,4 +13,5 @@
     <string name="heartrate_help">把您的手指放在相机上</string>
     <string name="heartrate_save_succeed">保存成功</string>
     <string name="check">点击查看</string>
+    <string name="cancel_measure_heartrate">取消心率测量？</string>
 </resources>

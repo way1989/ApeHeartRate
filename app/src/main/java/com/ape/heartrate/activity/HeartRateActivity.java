@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Menu;
@@ -50,6 +51,8 @@ public class HeartRateActivity extends BaseActivity<HeartRatePresenter, HeartRat
     ImageView mIvHeartMeasure;
     @BindView(R.id.tv_done_time_measure)
     TextView mTvDoneTimeMeasure;
+    @BindView(R.id.tv_toast_no_data)
+    TextView mTvToast;
     @BindView(R.id.wv_start)
     WaveView mWvStart;
     @BindView(R.id.iv_line_start)
@@ -95,56 +98,71 @@ public class HeartRateActivity extends BaseActivity<HeartRatePresenter, HeartRat
     public void onBackPressed() {
         if (mMeasureState == MEASURE_STATE_SAVE || mMeasureState == MEASURE_STATE_FAIL) {
             changeUiToInitial();
+        } else if (mMeasureState == MEASURE_STATE_ING) {
+            Snackbar.make(mTextureView, R.string.cancel_measure_heartrate, Snackbar.LENGTH_SHORT)
+                    .setAction(android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mPresenter.stopMeasure();
+                            changeUiToInitial();
+                        }
+                    }).show();
         } else {
             super.onBackPressed();
         }
     }
 
     public void changeUiToInitial() {
-        mTvDataMeasure.setText(R.string.measure_rate_default);
+        mHeartDrawable.stopTwinkle();
         mPwHeartrate.resetCount(false);
         mBtnToggle.setVisibility(View.VISIBLE);
         mIvLineStart.setVisibility(View.VISIBLE);
+        mWvStart.stopWave();
         mWvStart.setVisibility(View.INVISIBLE);
+
+        mTvDataMeasure.setText(R.string.measure_rate_default);
         mBtnToggle.setText(R.string.measure_btn_start);
+        mTvDoneTimeMeasure.setText("");
         mTvDoneTimeMeasure.setVisibility(View.GONE);
+        mTvToast.setVisibility(View.GONE);
 
         mMeasureState = MEASURE_STATE_START;
+    }
+
+    private void changeUiOnFinished(boolean succeed) {
+        mHeartDrawable.stopTwinkle();
+        mPwHeartrate.resetCount(false);
+        mBtnToggle.setVisibility(View.VISIBLE);
+        mIvLineStart.setVisibility(View.VISIBLE);
+        mWvStart.stopWave();
+        mWvStart.setVisibility(View.INVISIBLE);
+
+        mTvDataMeasure.setText(succeed ? getString(R.string.measure_rate_format, mFinalHeartRate)
+                : getString(R.string.measure_rate_default));
+        mBtnToggle.setText(succeed ? R.string.measure_btn_save : R.string.measure_btn_fail);
+        mTvDoneTimeMeasure.setText(mMeasureTime > 0 ? Util.getReadableDateTime(mMeasureTime) : "");
+        mTvDoneTimeMeasure.setVisibility(succeed ? View.VISIBLE : View.GONE);
+        mTvToast.setVisibility(View.GONE);
+
+        mMeasureState = succeed ? MEASURE_STATE_SAVE : MEASURE_STATE_FAIL;
     }
 
     @Override
     public void onTick(long millisUntilFinished, int beatsAvg) {
         Log.i(TAG, "millisUntilFinished = " + millisUntilFinished);
-        if(HeartRateModel.MEASURE_DURATION - millisUntilFinished / 1000 > 8)//前几秒数据不准确
-            mTvDataMeasure.setText(String.format("%03d", beatsAvg));
+        mTvDataMeasure.setText(beatsAvg > 30  ? getString(R.string.measure_rate_format, beatsAvg)
+                : getString(R.string.measure_rate_default));
         mWvStart.startWave(beatsAvg);
         mPwHeartrate.incrementProgress();
-        if(beatsAvg == 0)
-            Snackbar.make(mBtnToggle, R.string.heartrate_help, Snackbar.LENGTH_SHORT).show();
+        mTvToast.setVisibility(beatsAvg > 0 ? View.GONE : View.VISIBLE);
     }
 
     @Override
     public void onFinished(int avgBeats) {
         mFinalHeartRate = avgBeats;
 
-        changeUiOnFinished(avgBeats > 0);
-    }
-
-    private void changeUiOnFinished(boolean succeed) {
         mPresenter.stopMeasure();
-        mWvStart.stopWave();
-        mHeartDrawable.stopTwinkle();
-        mPwHeartrate.resetCount(false);
-        mBtnToggle.setVisibility(View.VISIBLE);
-        mIvLineStart.setVisibility(View.VISIBLE);
-        mWvStart.setVisibility(View.INVISIBLE);
-
-        mTvDataMeasure.setText(succeed ? String.format("%03d", mFinalHeartRate) : "___");
-        mBtnToggle.setText(succeed ? R.string.measure_btn_save : R.string.measure_btn_fail);
-        mTvDoneTimeMeasure.setVisibility(succeed ? View.VISIBLE : View.GONE);
-        mTvDoneTimeMeasure.setText(Util.getReadableDateTime(mMeasureTime));
-
-        mMeasureState = succeed ? MEASURE_STATE_SAVE : MEASURE_STATE_FAIL;
+        changeUiOnFinished(avgBeats > 0);
     }
 
     @Override
@@ -191,8 +209,8 @@ public class HeartRateActivity extends BaseActivity<HeartRatePresenter, HeartRat
             }
         });
         mHeartDrawable = new TwinkleDrawable(mIvHeartMeasure);
-        mHeartDrawable.addDrawable(getResources().getDrawable(R.drawable.ic_heart_big), true);
-        mHeartDrawable.addDrawable(getResources().getDrawable(R.drawable.ic_heart_small), false);
+        mHeartDrawable.addDrawable(getDrawable(R.drawable.ic_heart_big), true);
+        mHeartDrawable.addDrawable(getDrawable(R.drawable.ic_heart_small), false);
     }
 
     @Override
@@ -223,6 +241,7 @@ public class HeartRateActivity extends BaseActivity<HeartRatePresenter, HeartRat
         switch (mMeasureState) {
             case MEASURE_STATE_START:
             case MEASURE_STATE_FAIL:
+                changeUiToInitial();
                 HeartRateActivityPermissionsDispatcher.startMeasureWithCheck(this);
                 break;
             case MEASURE_STATE_SAVE:
@@ -230,11 +249,11 @@ public class HeartRateActivity extends BaseActivity<HeartRatePresenter, HeartRat
                 changeUiToInitial();
                 Snackbar.make(mBtnToggle, R.string.heartrate_save_succeed, Snackbar.LENGTH_LONG)
                         .setAction(R.string.check, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        gotoHistory();
-                    }
-                }).show();
+                            @Override
+                            public void onClick(View v) {
+                                gotoHistory();
+                            }
+                        }).show();
                 break;
             case MEASURE_STATE_ING:
                 break;
@@ -248,7 +267,7 @@ public class HeartRateActivity extends BaseActivity<HeartRatePresenter, HeartRat
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         HeartRateActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }

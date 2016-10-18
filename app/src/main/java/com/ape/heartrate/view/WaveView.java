@@ -60,7 +60,7 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
     private float[] mLineObjects;
     private Paint mPeakPaint;
     private Paint mEmptyPaint = new Paint();
-    private Path mWavePath = new Path();
+    private Path mWavePath;
     private float mCellWidth;
     private Bitmap mWaveBitmap;
 
@@ -226,6 +226,8 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
     @Override
     public void onEvalutor(final float x, final float y) {
         debug("onEvalutor--- x is " + x + " & y is " + y);
+        if (mWavePath == null)
+            return;
         mWavePath.lineTo(x, y);
         recycleWaveBitmap();
         mWaveBitmap = getBitmap(mWavePath, mPeakPaint);
@@ -245,7 +247,8 @@ public class WaveView extends View implements LinearEvaluator.EvaluatorListener,
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        mWavePath.offset(mCellWidth, 0);
+        if (mWavePath != null)
+            mWavePath.offset(mCellWidth, 0);
     }
 
     @Override
